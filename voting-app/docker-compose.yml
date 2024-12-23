@@ -1,0 +1,58 @@
+services:
+    main:
+        container_name: main
+        build:
+          context: .
+          dockerfile: Dockerfile.pnpm
+        environment:
+            VIRTUAL_HOST: voting.korakakis.com
+            LETSENCRYPT_HOST: voting.korakakis.com
+            LETSENCRYPT_EMAIL: mike.korakakis@gmail.com
+            NODE_ENV: production
+            VITE_ADMIN_USERNAME: admin
+            VITE_ADMIN_PASSWORD: admin
+        ports:
+            - 3000:3000
+        restart: unless-stopped
+
+
+
+
+    proxy:
+        image: jwilder/nginx-proxy
+        container_name: proxy
+        restart: unless-stopped
+        labels:
+            com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+            - certs:/etc/nginx/certs:rw
+            - vhost.d:/etc/nginx/vhost.d
+            - html:/usr/share/nginx/html
+        ports:
+            - "80:80"
+            - "443:443"
+
+    proxy-letsencrypt:
+        image: jrcs/letsencrypt-nginx-proxy-companion
+        container_name: letsencrypt
+        restart: unless-stopped
+        environment:
+            NGINX_PROXY_CONTAINER: proxy
+            # ACME_CA_URI: https://acme-staging-v02.api.letsencrypt.org/directory // staging not working
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - certs:/etc/nginx/certs:rw
+            - vhost.d:/etc/nginx/vhost.d
+            - html:/usr/share/nginx/html
+        depends_on:
+            - "proxy"
+
+
+
+volumes:
+    docker_sock:
+    certs:
+    vhost.d:
+    html:
+

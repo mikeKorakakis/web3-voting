@@ -1,0 +1,6 @@
+truffle migrate
+truffle console
+const instance = await Voting.deployed();
+console.log(instance.address)
+const candidatesCount = await instance.candidatesCount();
+console.log(candidatesCount.toString());

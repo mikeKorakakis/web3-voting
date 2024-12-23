@@ -1,0 +1,1 @@
+import{w as o}from"./with-props-b1i4h9El.js";import{p as r,r as n,l as t}from"./chunk-D52XG6IA-DVTnw_rV.js";const s=()=>{const e=r();return n.useEffect(()=>{e("/results")},[]),t.jsx(t.Fragment,{})};function u({}){return[{title:"New React Router App"},{name:"description",content:"Welcome to React Router!"}]}const c=o(function(){return t.jsx(s,{})});export{c as default,u as meta};
