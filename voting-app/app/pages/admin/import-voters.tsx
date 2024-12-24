@@ -90,7 +90,7 @@ const ImportVoters: React.FC = () => {
 								hasVoted: false,
 							});
 
-							console.log(`Voter registered: ${fullName} - Tx: ${tx.transactionHash}`);
+							console.log(`Voter registered: ${fullName} - Private: ${newAccount.privateKey} - Address: ${newAccount.address} - Tx: ${tx.transactionHash}`);
 						}
 					} catch (error: any) {
 						console.error(`Failed to register voter ${fullName}:`, error.message);
