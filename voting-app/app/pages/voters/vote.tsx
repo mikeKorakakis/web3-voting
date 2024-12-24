@@ -53,7 +53,6 @@ const App: React.FC = () => {
 		setMessage("Καταχωρούμε την ψήφο σας...");
 
 		try {
-			alert(selectedCandidates);
 			const tx = await contract.methods.vote(selectedCandidates).send({ from: account });
 
 			toast({ title: "Επιτυχία", description: "Η ψήφος σας καταχωρήθηκε.", variant: "default" });

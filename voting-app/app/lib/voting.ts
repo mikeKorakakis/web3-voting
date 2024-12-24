@@ -1,9 +1,7 @@
 import Web3 from "web3";
 import VotingContract from "../../contracts/Voting.json"; // Replace with your ABI JSON
-// import { contractAddress } from "@/constants";
-
 const contractABI = VotingContract.abi;
-const contractAddress = VotingContract.networks[5777].address;
+export const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS as string;
 
 let instance: any = null;
 

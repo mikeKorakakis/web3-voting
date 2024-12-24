@@ -1,17 +1,14 @@
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Crossbox } from '@/components/ui/crossbox';
 import { Datalist } from '@/components/ui/datalist';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { useToast } from '@/components/ui/use-toast';
 import { getContractInstance } from '@/lib/voting';
 import CandidatesList from '@/routes/common/candidates-list';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react'
-import { set, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form';
 import type { Candidate } from 'types/types';
 import * as z from 'zod';
 
@@ -27,7 +24,7 @@ const fruits = [
 	{ value: "pear", label: "Pear" },
 	{ value: "pineapple", label: "Pineapple" },
 	{ value: "strawberry", label: "Strawberry" },
-  ]
+]
 
 export type AddCandidateInput = z.z.infer<typeof addCandidateSchema>;
 
@@ -58,6 +55,7 @@ export default function Candidates() {
 
 				setCandidates(parsedCandidates);
 			} catch (err: any) {
+				console.log(err);
 				toast({ title: "Σφάλμα", description: err.message, variant: "destructive" });
 			}
 		};
@@ -84,6 +82,7 @@ export default function Candidates() {
 			const adminAccount = accounts[0];
 
 			await contract.methods.addCandidate(candidateName, party).send({ from: adminAccount });
+			
 			setRefresh(refresh => !refresh);
 			toast({ title: "Επιτυχία", description: `Ο υποψήφιος "${candidateName}" προστέθηκε με επιτυχία!`, variant: "default" });
 		} catch (err: any) {
@@ -153,7 +152,7 @@ export default function Candidates() {
 					</form>
 				</Form>
 			</Card>
-			<CandidatesList refresh={refresh} setRefresh={setRefresh} disabled/>
+			<CandidatesList refresh={refresh} setRefresh={setRefresh} disabled />
 		</div >
 	);
 }

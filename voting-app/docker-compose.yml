@@ -11,6 +11,7 @@ services:
             NODE_ENV: production
             VITE_ADMIN_USERNAME: admin
             VITE_ADMIN_PASSWORD: admin
+            VITE_CONTRACT_ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
         ports:
             - 3000:3000
         restart: unless-stopped

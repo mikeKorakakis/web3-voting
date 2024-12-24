@@ -100,6 +100,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 				.send({ from: currentAccount });
 
 			const voter = await contract.methods.getVoter(currentAccount).call();
+			if(voter[1] === true){
+				return false;
+			}
 			setUser({ username: voter[0], fullName: voter[0] });
 			setIsAdmin(false);
 			return true;
