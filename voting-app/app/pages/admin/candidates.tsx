@@ -30,7 +30,7 @@ export type AddCandidateInput = z.z.infer<typeof addCandidateSchema>;
 export default function Candidates() {
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [candidates, setCandidates] = useState<Candidate[]>([]);
-	const { votingOpen, openVoting, closeVoting } = useVoting()
+	const { isLoading: loadingVoting, votingOpen, openVoting, closeVoting } = useVoting()
 	const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(null);
 	const parties = new Set<string>();
 	const form = useForm<AddCandidateInput>({
@@ -120,11 +120,11 @@ return (
 	<div className="flex flex-col gap-6 w-full items-center">
 		<Card className='p-4 h-min w-96'>
 			<span className='text-lg m-auto font-semibold'>
-				{votingOpen ? "H ψηφοφορία έχει αρχίσει και δεν μπορείτε να προσθέσετε υποψηφίους" : "Η ψηφοφορία δεν έχει αρχίσει. Προσθέστε πρώτα υποψηφίους και κατόπιν επιλέξτε «Άνοιγμα Ψηφοφορίας» για να εκκινήσετε τη διαδικασία."}
+				{votingOpen ? "H ψηφοφορία έχει ξεκιήσει και δεν μπορείτε να προσθέσετε υποψηφίους" : "Η ψηφοφορία δεν έχει ξεκινήσει. Προσθέστε πρώτα υποψηφίους και κατόπιν επιλέξτε «Έναρξη Ψηφοφορίας» για να εκκινήσετε τη διαδικασία."}
 			</span>
-			<Button onClick={votingOpen ? closeVoting : openVoting} className={cn("w-full mt-2", votingOpen && 'bg-red-500')}>
-				{votingOpen ? "Κλείσιμο Ψηφοφορίας" : "Άνοιγμα Ψηφοφορίας"}
-			</Button>
+			<LoadingButton loading={loadingVoting} onClick={votingOpen ? closeVoting : openVoting} className={cn("w-full mt-2", votingOpen && 'bg-red-500 hover:bg-red-400')}>
+				{votingOpen ? "Λήξη Ψηφοφορίας" : "Έναρξη Ψηφοφορίας"}
+			</LoadingButton>
 		</Card>
 		<Card className='p-4 h-min w-96'>
 			<Form {...form} >
@@ -187,7 +187,7 @@ return (
 								)}
 							/>
 
-							<LoadingButton loading={isSubmitting} disabled={isSubmitting || votingOpen} type="submit" className="w-full mt-2">
+							<LoadingButton loading={isSubmitting || loadingVoting} disabled={isSubmitting || votingOpen} type="submit" className="w-full mt-2">
 								{(selectedCandidateId || selectedCandidateId === 0) ? "Επεξεργασία" : "Προσθήκη"} Υποψηφίου
 							</LoadingButton>
 						</div>

@@ -2,6 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { getContractInstance } from "./voting";
+import { set } from "zod";
 
 interface UseVotingProps {
 	contract: any;
@@ -10,6 +11,7 @@ interface UseVotingProps {
 
 export function useVoting() {
 	const [votingOpen, setVotingOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { isAdmin } = useAuth();
 
@@ -35,6 +37,7 @@ export function useVoting() {
 
 	const openVoting = async () => {
 		if (!isAdmin) return;
+		setIsLoading(true);
 		try {
 			const contract = await getContractInstance();
 			const accounts = await window.ethereum.request({
@@ -55,10 +58,13 @@ export function useVoting() {
 				description: "Σφάλμα κατά το άνοιγμα της ψηφοφορίας",
 				variant: "destructive",
 			});
+		}finally {
+			setIsLoading(false);
 		}
 	};
 
 	const closeVoting = async () => {
+		setIsLoading(true);
 		if (!isAdmin) return;
 		try {
 			const contract = await getContractInstance();
@@ -78,10 +84,13 @@ export function useVoting() {
 				description: "Σφάλμα κατά το κλείσιμο της ψηφοφορίας",
 				variant: "destructive",
 			});
+		}finally {
+			setIsLoading(false);
 		}
 	};
 
 	return {
+		isLoading,
 		votingOpen,
 		openVoting,
 		closeVoting,

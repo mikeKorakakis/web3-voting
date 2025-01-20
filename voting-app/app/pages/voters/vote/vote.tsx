@@ -93,7 +93,7 @@ const App: React.FC = () => {
 			<div className="w-full flex  flex-col items-center pb-4">
 				<Card className='p-4 h-min w-96 text-center'>
 					<span className='text-lg w-full text-center font-semibold'>
-						{votingOpen ? "H ψηφοφορία έχει αρχίσει" : "Η ψηφοφορία δεν έχει αρχίσει"}
+						{votingOpen ? "H ψηφοφορία έχει ξεκινήσει" : "Η ψηφοφορία δεν έχει ξεκινήσει"}
 					</span>
 				</Card>
 				<h1 className="text-2xl font-bold">Ψηφίστε</h1>

@@ -54,7 +54,7 @@ export default function TotalVoters({votingOpen}: {votingOpen: boolean}) {
 	return (
 		<Card className="flex flex-col mb-8">
 			<CardHeader className="items-center pb-0">
-				<CardTitle>{votingOpen ? "H ψηφοφορία έχει αρχίσει": "Η ψηφοφορία δεν έχει αρχίσει"}</CardTitle>
+				<CardTitle>{votingOpen ? "H ψηφοφορία έχει ξεκινήσει": "Η ψηφοφορία δεν έχει ξεκινήσει"}</CardTitle>
 				<CardTitle>Ψήφισαν: {voted || 0}</CardTitle>
 				<CardDescription>Εγγεγραμμένοι ψηφοφόροι: {voters.length}</CardDescription>
 			</CardHeader>
