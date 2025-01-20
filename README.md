@@ -9,6 +9,8 @@ npx hardhat help
 npx hardhat test
 REPORT_GAS=true npx hardhat test
 npx hardhat node
+npx hardhat vars set QUICKNODE_API_KEY
+npx hardhat vars set PRIVATE_KEY
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 npx hardhat ignition deploy ignition/modules/Voting.ts --network sepolia
 ```

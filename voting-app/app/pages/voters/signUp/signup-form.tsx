@@ -42,7 +42,7 @@ export default function SignUpForm() {
 	const onSubmit = async (values: z.infer<typeof signupSchema>) => {
 		setIsSubmitting(true)
 
-		if(!web3){
+		if (!web3) {
 			toast({
 				title: "Σφάλμα",
 				description: "Δεν υπάρχει σύνδεση με το δίκτυο",
@@ -63,7 +63,6 @@ export default function SignUpForm() {
 			const contract = await getContractInstance();
 			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
 			const account = accounts[0];
-
 			const voter = await contract.methods.getVoter(account).call();
 			if (voter[1]) {
 				toast({
@@ -75,16 +74,20 @@ export default function SignUpForm() {
 			}
 
 			
+			const gasEstimate = await contract.methods
+				.registerVoter(fullName)
+				.estimateGas({ from: account });
 			const tx = await contract.methods
-				.registerVoter(account, fullName) 
-				.send({ from: account });
+				.registerVoter(fullName)
+				.send({ from: account, gasEstimate });
 
 			toast
-			({
-				title: "Επιτυχία",
-				description: `Ο ψηφοφόρος ${fullName} εγγράφηκε με επιτυχία.`,
-				variant: "default"
-			});
+				({
+					title: "Επιτυχία",
+					description: `Ο ψηφοφόρος ${fullName} εγγράφηκε με επιτυχία.`,
+					variant: "default"
+				});
+			navigate("/signin")
 			console.log(`Voter registered: ${fullName} - Tx: ${tx.transactionHash}`);
 		}
 		catch (error) {

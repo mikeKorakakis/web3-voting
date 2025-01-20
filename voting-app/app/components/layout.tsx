@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useRef } from 'react'
 import Logo from './ui/logo'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useAuth } from 'contexts/AuthContext'
@@ -13,13 +13,17 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
 	const auth = useAuth()
-	const { isAuthenticated, isAdmin, logout, user } = auth
-	if (!isAuthenticated && (pathname.includes('vote'))) {
-		navigate('/signin')
-	}
-	if (pathname.includes('admin') && !isAdmin) {
-		navigate('/signin')
-	}
+	const { isLoading, isAuthenticated, isAdmin, logout, user } = auth
+
+	useEffect(() => {
+		if (isLoading) return;
+		if (!isAuthenticated && (pathname.includes('vote'))) {
+			navigate('/signin')
+		}
+		if (pathname.includes('admin') && !isAdmin) {
+			navigate('/signin')
+		}
+	}, [pathname, isAuthenticated, isAdmin, isLoading])
 
 
 
@@ -31,9 +35,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 					{
 						isAdmin &&
 						<>
-							<Link to="/admin/contract" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Contract</Link>
 							<Link to="/admin/candidates" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Υποψήφιοι</Link>
-							<Link to="/admin/import-voters" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Εισαγωγή Ψηφοφόρων</Link>
+							<Link to="/admin/contract" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Contract</Link>
+							{/* <Link to="/admin/import-voters" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Εισαγωγή Ψηφοφόρων</Link> */}
 						</>
 					}
 					{!isAdmin && isAuthenticated && <Link to="/vote" className="ml-8 pt-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Ψηφίστε</Link>}

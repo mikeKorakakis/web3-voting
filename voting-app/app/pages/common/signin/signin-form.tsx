@@ -39,7 +39,7 @@ export default function SignInForm() {
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 	const [isMetamask, setIsMetamask] = useState<boolean>(false)
 	const { toast } = useToast();
-	const { login } = useAuth();
+	const { login, isAdmin } = useAuth();
 
 
 	const onSubmit = async (values: z.infer<typeof signinSchema>) => {
@@ -48,30 +48,34 @@ export default function SignInForm() {
 
 		try {
 			const { username, password } = values;
-
+			let res = "UNREGISTERED";
 			if (username && password) {
-				if (await login(username, password)) {
-					navigate("/admin/contract")
-
-				} else {
-					toast({
-						title: "Σφάλμα",
-						description: "Λάθος στοιχεία σύνδεσης",
-						variant: "destructive"
-					});
-				}
+				res = await login(username, password)
 			}
 			else {
-				await login(undefined, undefined)
-				navigate("/vote")
-
+				res = await login(undefined, undefined)
+			}
+			if (res === "ADMIN" || res === "VOTER") {
 				toast
 					({
 						title: "Επιτυχία",
 						description: `Επιτυχής Σύνδεση.`,
 						variant: "default"
 					});
+
+				if (res === "ADMIN") {
+					navigate("/admin/candidates")
+				} else {
+					navigate("/vote")
+				}
+			} else {
+				toast({
+					title: "Σφάλμα",
+					description: "Λάθος στοιχεία σύνδεσης",
+					variant: "destructive"
+				});
 			}
+
 		}
 		catch (error) {
 			console.error(error);

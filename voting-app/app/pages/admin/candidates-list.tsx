@@ -6,21 +6,38 @@ import { getContractInstance } from '@/lib/voting';
 import React, { useEffect, useState } from 'react'
 import type { Candidate } from 'types/types';
 import { Label } from '@/components/ui/label';
+import { Trash2, Pencil } from 'lucide-react';
 
 interface Props {
 	disabled?: boolean;
 	refresh: boolean;
 	setRefresh: (refresh: boolean) => void;
-	selectedCandidates?: number[];
-	setSelectedCandidates?: (selectedCandidates: number[]) => void;
+	selectedCandidateId?: number;
+	setSelectedCandidateId?: (selectedCandidates: number) => void;
 }
 
 
-export default function CandidatesList({ disabled, refresh, setRefresh, selectedCandidates, setSelectedCandidates }: Props) {
+export default function CandidatesList({ disabled, refresh, setRefresh, selectedCandidateId, setSelectedCandidateId }: Props) {
 	const [candidates, setCandidates] = useState<Candidate[]>([]);
-	const [candidatesMap, setCandidatesMap] = useState<Map<number, Candidate>>(new Map());	
+	const [candidatesMap, setCandidatesMap] = useState<Map<number, Candidate>>(new Map());
 	const [groupedCandidates, setGroupedCandidates] = useState<{ [party: string]: Candidate[] }>({});
 
+	const deleteCandidate = async (id: number) => {
+		const contract = await getContractInstance();
+		try {
+			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+			const account = accounts[0];
+			const gasEstimate = await contract.methods.deleteCandidate(id).estimateGas({ from: account });
+			await contract.methods.deleteCandidate(id).send({ from: account, gasEstimate });
+			toast({ title: "Επιτυχία", description: "Ο υποψήφιος διαγράφηκε.", variant: "default" });
+			setRefresh(!refresh);
+		} catch (err: any) {
+			toast({ title: "Σφάλμα", description: err.message, variant: "destructive" });
+		}
+	}
+
+
+	
 
 	const groupByParty = (candidates: Candidate[]) => {
 		const grouped = candidates.reduce((acc: { [party: string]: Candidate[] }, candidate) => {
@@ -65,6 +82,8 @@ export default function CandidatesList({ disabled, refresh, setRefresh, selected
 		fetchCandidates();
 	}, [refresh]);
 
+
+
 	useEffect(() => {
 		if (candidates.length > 0) {
 			groupByParty(candidates);
@@ -83,28 +102,32 @@ export default function CandidatesList({ disabled, refresh, setRefresh, selected
 							<ul className='pt-2'>
 								{groupedCandidates[party].map((candidate) => (
 									<div className="flex items-center pt-2" key={candidate.id}>
+										
 										<Label htmlFor="candidate2" className="flex-1 cursor-pointer">
 											<div className="flex items-center justify-between">
 												<span className="font-medium text-lg">{candidate.name}</span>
-												<Crossbox className="text-muted-foreground"
-													disabled={disabled}
-													checked={disabled || selectedCandidates?.includes(candidate.id)}
-													onClick={() => {
-														if (selectedCandidates && selectedCandidates?.some(candidateId => candidatesMap.get(candidateId)?.party !== party)) {
-															toast({ title: "Σφάλμα", description: "Δεν μπορείτε να ψηφίσετε υποψηφίους από διαφορετικά κόμματα", variant: "destructive" });
-															return;
-														}
-														if (selectedCandidates?.includes(candidate.id)) {
-															setSelectedCandidates && setSelectedCandidates(selectedCandidates.filter((id) => id !== candidate.id))
-														} else {
-															if (selectedCandidates?.length === 2) {
-																toast({ title: "Σφάλμα", description: "Μπορείτε να επιλέξετε μόνο 2 υποψηφίους", variant: "destructive" });
-															} else {
-																setSelectedCandidates && setSelectedCandidates([...selectedCandidates!, candidate.id])
+												<div className="flex gap-2">
+													<Button className=' w-12'
+														disabled={disabled}
+														onClick={() => {
+															setSelectedCandidateId && setSelectedCandidateId(candidate.id);
+														}}
+													>
+														<Pencil className="bg-white-500"
+														/>
+													</Button>
+													<Button className='bg-red-500 hover:bg-red-400 w-12'
+														disabled={disabled}
+														onClick={() => {
+															if (confirm("Είστε σίγουροι ότι θέλετε να διαγράώσετε τον υποψήφιο;")) {
+																deleteCandidate(candidate.id);
 															}
-														}
-													}}
-												/>
+														}}
+													>
+														<Trash2 className="bg-white-500"
+														/>
+													</Button>
+												</div>
 											</div>
 										</Label>
 									</div>
@@ -115,6 +138,8 @@ export default function CandidatesList({ disabled, refresh, setRefresh, selected
 					</div>
 				))}
 			</ul>
+			<div className='h-10'></div>
+
 		</div>
 	)
 }

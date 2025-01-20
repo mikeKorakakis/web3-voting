@@ -1,4 +1,4 @@
-import ImportVoters from "@/pages/admin/import-voters";
+import ImportVoters from "@/pages/admin/import-voters_not_used";
 import type { Route } from "../+types/layout";
 
 export function meta({}: Route.MetaArgs) {

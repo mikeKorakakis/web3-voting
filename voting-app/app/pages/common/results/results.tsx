@@ -14,13 +14,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/use-toast";
 import type { Candidate } from "types/types";
 import TotalVoters from "./total-voters";
+import { useVoting } from "@/lib/useVoting";
 
 
 const Results: React.FC = () => {
 	const [candidates, setCandidates] = useState<Candidate[]>([]);
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [groupedCandidates, setGroupedCandidates] = useState<{ [party: string]: Candidate[] }>({});
-
+	const {votingOpen} = useVoting();
 
 	const groupByParty = (candidates: Candidate[]) => {
 		const grouped = candidates.reduce((acc: { [party: string]: Candidate[] }, candidate) => {
@@ -90,7 +91,7 @@ const Results: React.FC = () => {
 
 	return (
 		<div className="container mx-auto p-4 max-w-4xl mb-8">
-			<TotalVoters/>
+			<TotalVoters votingOpen={votingOpen}/>
 			<Card>
 				<CardHeader>
 					<CardTitle>Αποτελέσματα Εκλογών</CardTitle>
@@ -112,9 +113,10 @@ const Results: React.FC = () => {
 								tickLine={false}
 								tickMargin={10}
 								axisLine={false}
+								width={100}
 
 							/>
-							<XAxis dataKey="votes" type="number" />
+							<XAxis dataKey="votes" type="number"/>
 							<ChartTooltip
 								cursor={false}
 								content={<ChartTooltipContent hideLabel />}
@@ -137,7 +139,7 @@ const Results: React.FC = () => {
 					<Card className="mt-4">
 						<CardHeader>
 							<CardTitle>Αποτελέσματα Εκλογών</CardTitle>
-							<CardDescription>Αποτελέσματα {party.toUpperCase()}</CardDescription>
+							<CardDescription>Αποτελέσματα {party}</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<ChartContainer config={chartConfigParties}>
@@ -148,6 +150,7 @@ const Results: React.FC = () => {
 									margin={{
 										left: 0,
 									}}
+
 								>
 									<YAxis
 										dataKey="candidate"
@@ -155,9 +158,10 @@ const Results: React.FC = () => {
 										tickLine={false}
 										tickMargin={10}
 										axisLine={false}
+										width={100}
 
 									/>
-									<XAxis dataKey="votes" type="number" />
+									<XAxis dataKey="votes" type="number"  />
 									<ChartTooltip
 										cursor={false}
 										content={<ChartTooltipContent hideLabel />}

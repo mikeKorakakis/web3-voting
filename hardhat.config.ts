@@ -3,7 +3,7 @@ import "@nomicfoundation/hardhat-toolbox";
 
 const QUICKNODE_API_KEY = vars.get("QUICKNODE_API_KEY");
 const PRIVATE_KEY = vars.get("PRIVATE_KEY");
-const ganacheAccount ="0x39b2ee4d274a4a5e3652660ff17e67ed75622d063ad8a61f5707d43ae5dd1758"
+const ganacheAccount ="0x66c5c332c9b60f15c8a080ea43707ed04c200d9a1fcbb08fd20eabec7d1c8de0"
 
 const config: HardhatUserConfig = {
   solidity: "0.8.28",
