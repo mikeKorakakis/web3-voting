@@ -76,18 +76,30 @@ contract Voting {
         uint _candidateId
     ) public view returns (uint, string memory, string memory, uint) {
         Candidate memory candidate = candidates[_candidateId];
+
+        uint voteCount = votingOpen ? 0 : candidate.voteCount; // Hide vote count if voting is open
+
         return (
             candidate.id,
             candidate.name,
             candidate.party,
-            candidate.voteCount
+            voteCount
         );
     }
 
     function getAllCandidates() public view returns (Candidate[] memory) {
         Candidate[] memory allCandidates = new Candidate[](candidatesCount);
         for (uint i = 0; i < candidatesCount; i++) {
-            allCandidates[i] = candidates[i];
+            if (votingOpen) {
+                allCandidates[i] = Candidate(
+                    candidates[i].id,
+                    candidates[i].name,
+                    candidates[i].party,
+                    0
+                );
+            } else {
+                allCandidates[i] = candidates[i];
+            }
         }
         return allCandidates;
     }
@@ -144,7 +156,7 @@ contract Voting {
             fullName: _fullname,
             isRegistered: true,
             hasVoted: false,
-			votedCandidateIds: new uint[](maxVotes)
+            votedCandidateIds: new uint[](maxVotes)
         });
 
         voterAddresses.push(msg.sender);
@@ -166,16 +178,22 @@ contract Voting {
             );
             candidates[candidateId].voteCount++;
         }
-		voters[msg.sender].votedCandidateIds = _candidateIds;
+        voters[msg.sender].votedCandidateIds = _candidateIds;
         voters[msg.sender].hasVoted = true;
     }
 
-  
-
-    function getVoter(
-    ) public view returns (string memory, bool, bool, uint[] memory) {
+    function getVoter()
+        public
+        view
+        returns (string memory, bool, bool, uint[] memory)
+    {
         Voter memory voter = voters[msg.sender];
-        return (voter.fullName, voter.isRegistered, voter.hasVoted, voter.votedCandidateIds);
+        return (
+            voter.fullName,
+            voter.isRegistered,
+            voter.hasVoted,
+            voter.votedCandidateIds
+        );
     }
 
     function getAllVoters() public view returns (Voter[] memory) {
