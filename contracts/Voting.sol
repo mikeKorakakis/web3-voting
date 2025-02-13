@@ -21,6 +21,8 @@ contract Voting {
     mapping(address => bool) public admins;
     mapping(uint => Candidate) public candidates;
     mapping(address => Voter) public voters;
+    // uncomment to add unique party votes
+    // mapping(string => uint) public partyVotes;
     address[] public voterAddresses;
     uint public candidatesCount;
     uint public maxVotes;
@@ -79,12 +81,7 @@ contract Voting {
 
         uint voteCount = votingOpen ? 0 : candidate.voteCount; // Hide vote count if voting is open
 
-        return (
-            candidate.id,
-            candidate.name,
-            candidate.party,
-            voteCount
-        );
+        return (candidate.id, candidate.name, candidate.party, voteCount);
     }
 
     function getAllCandidates() public view returns (Candidate[] memory) {
@@ -170,6 +167,9 @@ contract Voting {
             "Exceeded maximum number of votes."
         );
 
+        // uncomment to add unique party votes
+        // string memory selectedParty = candidates[_candidateIds[0]].party;
+
         for (uint i = 0; i < _candidateIds.length; i++) {
             uint candidateId = _candidateIds[i];
             require(
@@ -178,6 +178,9 @@ contract Voting {
             );
             candidates[candidateId].voteCount++;
         }
+        // uncomment to add unique party votes
+        // partyVotes[selectedParty]++;
+
         voters[msg.sender].votedCandidateIds = _candidateIds;
         voters[msg.sender].hasVoted = true;
     }
@@ -203,4 +206,33 @@ contract Voting {
         }
         return allVoters;
     }
+
+    // uncomment to add unique party votes
+    // 	function getPartyVotes() public view returns (string[] memory, uint[] memory) {
+    //     uint partyCount = 0;
+    //     string[] memory tempPartyNames = new string[](candidatesCount);
+    //     mapping(string => bool) memory countedParties;
+
+
+    //     for (uint i = 0; i < candidatesCount; i++) {
+    //         string memory party = candidates[i].party;
+    //         if (!countedParties[party]) {
+    //             countedParties[party] = true;
+    //             tempPartyNames[partyCount] = party;
+    //             partyCount++;
+    //         }
+    //     }
+
+
+    //     string[] memory partyNames = new string[](partyCount);
+    //     uint[] memory voteCounts = new uint[](partyCount);
+
+
+    //     for (uint i = 0; i < partyCount; i++) {
+    //         partyNames[i] = tempPartyNames[i];
+    //         voteCounts[i] = partyVotes[partyNames[i]];
+    //     }
+
+    //     return (partyNames, voteCounts);
+    // }
 }
